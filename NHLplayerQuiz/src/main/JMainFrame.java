@@ -12,8 +12,11 @@ import java.awt.CardLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class JMainFrame {
+	private DbConnection dbConnection;
 	private ListOfRows<Player> team;
 	private ListOfRows<Suggestion> playerUpdates;
 	private Franchise franchise;
@@ -54,6 +57,34 @@ public class JMainFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.addWindowListener(new WindowListener(){
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				try {
+					dbConnection.close();
+				} catch (SQLException | NullPointerException e) {
+					System.exit(-1);
+				}
+			}
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+			}
+			@Override
+			public void windowClosed(WindowEvent arg) {
+			}
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+			}
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+			}
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+			}
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+			}
+		});
 		frame.setBounds(100, 100, 733, 439);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -92,7 +123,19 @@ public class JMainFrame {
 		panelControls.addPropertyChangeListener("playerEdited", new PropertyChangeListener(){
 			@Override
 			public void propertyChange(PropertyChangeEvent e) {
-				
+				Player player = (Player)e.getNewValue();
+				String[] fieldAndValue = (String[]) e.getOldValue();
+				try {
+					for(int i = 0; i < fieldAndValue.length; i+=2){
+						DbPlayerField field = DbPlayerField.valueOf(fieldAndValue[i]);
+						String value = fieldAndValue[i+1];
+						Suggestion suggestion = new Suggestion(player.getId(), field, value);
+						dbConnection.addNewSuggestion(player, suggestion);
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		GridBagConstraints gbc_panelControls = new GridBagConstraints();
@@ -107,8 +150,12 @@ public class JMainFrame {
 	private void teamChange(){
 		TeamName teamName = TeamName.valueOf(franchise.getTeamName().toUpperCase());
 		try {
-			team = new DbTeam().getTeam(teamName);
-			playerUpdates = new DbSuggestions().getSuggestions(team);
+			if(dbConnection != null){
+				dbConnection.close();
+			}
+			dbConnection = new DbConnection(teamName);
+			team = dbConnection.getTeam();
+			playerUpdates = dbConnection.getSuggestions();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,7 +163,7 @@ public class JMainFrame {
 		panelQuiz = new JPanelQuiz(team);
 		panelTeam = new JPanelListAllTeam(team);
 		panelSuggestions = new JPanelListSuggestions(team, playerUpdates);
-		
+
 		addListeners(panelQuiz);
 		addListeners(panelTeam);
 		addListeners(panelSuggestions);
@@ -125,10 +172,16 @@ public class JMainFrame {
 		panelContainer.add(panelQuiz, "quiz");
 		panelContainer.add(panelTeam, "team");
 		panelContainer.add(panelSuggestions, "vote");
-		
-		frame.getContentPane().add(panelContainer);
+
+		GridBagConstraints gbc_panelContainer = new GridBagConstraints();
+		gbc_panelContainer.insets = new Insets(0, 0, 0, 0);
+		gbc_panelContainer.fill = GridBagConstraints.BOTH;
+		gbc_panelContainer.gridx = 0;
+		gbc_panelContainer.gridy = 0;
+		frame.getContentPane().add(panelContainer, gbc_panelContainer);
 		
 		changePanel("quiz");
+		panelQuiz.start();
 	}
 	
 	private void changePanel(String panelName){
@@ -151,7 +204,6 @@ public class JMainFrame {
 			default:
 				panelControls.showButtons();
 				break;
-				
 		}
 	}
 	
@@ -168,19 +220,14 @@ public class JMainFrame {
 		panel.addPropertyChangeListener("playerChange", new PropertyChangeListener(){
 			@Override
 			public void propertyChange(PropertyChangeEvent e) {
-				panelControls.setPlayer((Player) e.getNewValue());
-			}
-		});
-		
-		panel.addPropertyChangeListener("playerEdited", new PropertyChangeListener(){
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				String[] fieldAndValue = (String[]) e.getOldValue();
-				for(int i = 0; i < fieldAndValue.length; i+=2){
-					String field = fieldAndValue[i];
-					
+				int playerId = (int) e.getNewValue();
+				Franchise franchise = (Franchise) e.getOldValue();
+				try{
+					panelControls.setPlayer(new DbConnection(TeamName.valueOf(franchise.getTeamName().toUpperCase())).getPlayer(playerId));
+				}catch(SQLException sqle){
+					// TODO Auto-generated catch block
+					sqle.printStackTrace();
 				}
-				Player player = (Player)e.getNewValue();
 			}
 		});
 		

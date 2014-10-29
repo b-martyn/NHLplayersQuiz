@@ -31,7 +31,6 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JDialogEdit extends JDialog {
@@ -241,8 +240,13 @@ public class JDialogEdit extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						if(fieldsAreValid()){
-							if(!player.equals(editedPlayer)){
-								firePropertyChange("playerEdited", getChanges(player, editedPlayer), editedPlayer);
+							if(player != null){
+								if(!player.equals(editedPlayer)){
+									firePropertyChange("playerEdited", getChanges(player, editedPlayer), editedPlayer);
+								}
+							}else{
+								String[] changes = {"active", "TRUE"};
+								firePropertyChange("playerEdited", changes, editedPlayer);
 							}
 							dispose();
 						}
@@ -339,7 +343,11 @@ public class JDialogEdit extends JDialog {
 			txtFieldPosition.setForeground(Color.RED);
 		}
 		if(result){
-			editedPlayer = new Player(firstName, lastName, teamName, position, number);
+			if(player != null){
+				editedPlayer = new Player(player.getId(), firstName, lastName, teamName, position, number, true);
+			}else{
+				editedPlayer = new Player(firstName, lastName, teamName, position, number);
+			}
 		}
 		return result;
 	}
@@ -397,11 +405,6 @@ public class JDialogEdit extends JDialog {
 	
 	private String[] getChanges(Player original, Player edited){
 		List<String> changes = new ArrayList<String>();
-		if(player == null){
-			changes.add("active");
-			changes.add("TRUE");
-			return (String[]) changes.toArray();
-		}
 		if(!original.getFirstName().equals(edited.getFirstName())){
 			changes.add("firstName");
 			changes.add(edited.getFirstName());
@@ -422,6 +425,6 @@ public class JDialogEdit extends JDialog {
 			changes.add("number");
 			changes.add(String.valueOf(edited.getNumber()));
 		}
-		return (String[]) changes.toArray();
+		return changes.toArray(new String[changes.size()]);
 	}
 }

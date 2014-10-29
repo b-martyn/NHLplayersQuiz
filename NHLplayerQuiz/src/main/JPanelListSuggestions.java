@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class JPanelListSuggestions extends JPanelListAll {
 	private HashMap<List<Integer>, String> cellsToHighlight;
@@ -13,7 +15,7 @@ public class JPanelListSuggestions extends JPanelListAll {
 	public JPanelListSuggestions(ListOfRows<Player> team, ListOfRows<Suggestion> suggestions) {
 		super(team);
 		this.suggestions = suggestions;
-		setHighlightedTableData();
+		setData();
 	}
 	
 	@Override
@@ -25,9 +27,10 @@ public class JPanelListSuggestions extends JPanelListAll {
 	protected void setTableData(){
 	}
 	
-	private void setHighlightedTableData(){
-		Object[][] data = convertData(team.getList());
-		tableMain.setModel(new JDefaultTableModel(data));
+	private void setData(){
+		TableModel model = new JDefaultTableModel(convertData(team.getList()));
+		tableMain.setModel(model);
+		tableMain.setRowSorter(new TableRowSorter<TableModel>(model));
 		highlightFields();
 		setColumnRenderers();
 	}

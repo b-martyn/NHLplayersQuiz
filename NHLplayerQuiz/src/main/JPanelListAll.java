@@ -5,25 +5,34 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.sql.SQLException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.ListSelectionModel;
 
 public class JPanelListAll extends JPanel {
 	protected ListOfRows<Player> team;
 	
 	protected JTable tableMain;
+	protected JLabel lblHeader;
 
 	/**
 	 * Create the panel.
@@ -59,13 +68,13 @@ public class JPanelListAll extends JPanel {
 		gbl_panelHeader.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		panelHeader.setLayout(gbl_panelHeader);
 		
-		JLabel lblTeamName = new JLabel(team.getRandomRow().getFranchise().getProvince() + " " + team.getRandomRow().getFranchise().getTeamName());
-		lblTeamName.setFont(new Font("Tahoma", Font.PLAIN, 55));
-		lblTeamName.setHorizontalAlignment(SwingConstants.CENTER);
-		GridBagConstraints gbc_lblTeamName = new GridBagConstraints();
-		gbc_lblTeamName.gridx = 0;
-		gbc_lblTeamName.gridy = 0;
-		panelHeader.add(lblTeamName, gbc_lblTeamName);
+		lblHeader = new JLabel();
+		lblHeader.setFont(new Font("Tahoma", Font.PLAIN, 55));
+		lblHeader.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblHeader = new GridBagConstraints();
+		gbc_lblHeader.gridx = 0;
+		gbc_lblHeader.gridy = 0;
+		panelHeader.add(lblHeader, gbc_lblHeader);
 		
 		JPanel panelMain = new JPanel();
 		GridBagConstraints gbc_panelMain = new GridBagConstraints();
@@ -93,15 +102,14 @@ public class JPanelListAll extends JPanel {
 		tableMain.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				try {
-					Player playerSelected = new DbTeam().getPlayer((Integer)tableMain.getValueAt(tableMain.getSelectedRow(), 0));
-					firePropertyChange("playerChange", true, playerSelected);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if(tableMain.getSelectedRow() > 0){
+					int playerId = (int) tableMain.getValueAt(tableMain.getSelectedRow(), 0);
+					Franchise franchaise = (Franchise) tableMain.getValueAt(tableMain.getSelectedRow(), 1);
+					firePropertyChange("playerChange", franchaise, playerId);
 				}
 			}
 		});
+		tableMain.setRowHeight(50);
 		scrollPaneMain.setViewportView(tableMain);
 	}
 	
@@ -110,9 +118,9 @@ public class JPanelListAll extends JPanel {
 	}
 	
 	protected void setTableData(){
-		Object[][] data = convertData(team.getList());
-		tableMain.setModel(new JDefaultTableModel(data));
-		setColumnRenderers();
+	}
+	
+	protected void setHeaderLabel(){
 	}
 	
 	protected Object[][] convertData(List<Player> players){

@@ -7,17 +7,19 @@ public class Player {
 	private Franchise franchise;
 	private Position position;
 	private int number;
+	private boolean active;
 	
-	public Player(int id, String firstName, String lastName, TeamName teamName, Position position, int number){
+	public Player(int id, String firstName, String lastName, TeamName teamName, Position position, int number, boolean active){
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.franchise = new Franchise(teamName);
 		this.position = position;
 		this.number = number;
+		this.active = active;
 	}
 	public Player(String firstName, String lastName, TeamName teamName, Position position, int number){
-		this(0, firstName, lastName, teamName, position, number);
+		this(0, firstName, lastName, teamName, position, number, true);
 	}
 
 	public int getId() {
@@ -67,6 +69,14 @@ public class Player {
 
 	void setNumber(int number) {
 		this.number = number;
+	}
+	
+	void setActive(boolean active){
+		this.active = active;
+	}
+	
+	boolean isActive(){
+		return active;
 	}
 	
 	@Override

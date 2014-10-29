@@ -15,7 +15,7 @@ public class ListOfRows<T> {
 	
 	public T getRandomRow(){
 		int numOfRows = rows.size();
-		int randomRow = (int) Math.round((Math.random() * (numOfRows - 1)));
+		int randomRow = (int) Math.floor((Math.random() * (numOfRows - 1)));
 		return rows.get(randomRow);
 	}
 }

@@ -1,6 +1,11 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class JPanelListAllTeam extends JPanelListAll {
 	
@@ -11,6 +16,25 @@ public class JPanelListAllTeam extends JPanelListAll {
 	@Override
 	protected JPanelControls setPanelControls(){
 		return new JPanelControls(1, 2, 3, 5, 6);
+	}
+	
+	@Override
+	protected void setTableData(){
+		List<Player> activePlayers = new ArrayList<Player>();
+		for(Player player : team.getList()){
+			if(player.isActive()){
+				activePlayers.add(player);
+			}
+		}
+		TableModel model = new JDefaultTableModel(convertData(activePlayers));
+		tableMain.setModel(model);
+		tableMain.setRowSorter(new TableRowSorter<TableModel>(model));
+		setColumnRenderers();
+	}
+	
+	@Override
+	protected void setHeaderLabel(){
+		lblHeader.setText(team.getRandomRow().getFranchise().getProvince() + " " + team.getRandomRow().getFranchise().getTeamName());
 	}
 	
 	@Override
