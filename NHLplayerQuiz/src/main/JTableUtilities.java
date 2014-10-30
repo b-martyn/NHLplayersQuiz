@@ -23,14 +23,13 @@ import javax.swing.table.DefaultTableModel;
 
 class JDefaultTableModel extends DefaultTableModel {
 	private static final String[] IDENTIFIERS = {"id", "franchise", "Number", "First Name", "Last Name", "Position"};
-	{
-		Vector<String> identifiersVector = new Vector<String>();
-		identifiersVector.addAll(Arrays.asList(IDENTIFIERS));
-		columnIdentifiers=identifiersVector;
+	
+	JDefaultTableModel(Object[][] data, Object[] header){
+		super(data, header);
 	}
 	
 	JDefaultTableModel(Object[][] data){
-		super(data, IDENTIFIERS);
+		this(data, IDENTIFIERS);
 	}
 	
 	@Override
@@ -43,18 +42,14 @@ class JDefaultTableModel extends DefaultTableModel {
 
 class JDefaultTableCellRenderer extends DefaultTableCellRenderer {
 	static final Dimension NUMBER_CELL_SIZE = new Dimension(50, 50);
-	private HashMap<List<Integer>, String> cellsToHighlight;
+	private HashMap<Integer[], String[]> cellsToHighlight;
 	
 	JDefaultTableCellRenderer(){
-		this(new HashMap<List<Integer>, String>());
+		this(new HashMap<Integer[], String[]>());
 	}
 	
-	JDefaultTableCellRenderer (HashMap<List<Integer>, String> cellsToHighlight){
+	JDefaultTableCellRenderer (HashMap<Integer[], String[]> cellsToHighlight){
 		this.cellsToHighlight = cellsToHighlight;
-		runSetup();
-	}
-	
-	private void runSetup(){
 		this.setHorizontalAlignment(CENTER);
 	}
 	
@@ -63,23 +58,38 @@ class JDefaultTableCellRenderer extends DefaultTableCellRenderer {
 		Component component = super.getTableCellRendererComponent(table, object, isSelected, hasFocus, row, column);
 		
 		component.setFont(new Font("Serif", Font.PLAIN, 20));
+		int franchiseRow = 0;
+		for(int i = 0; i < table.getColumnCount(); i++){
+			if(table.getColumnName(i).equalsIgnoreCase("franchise")){
+				franchiseRow = i;
+			}
+		}
+		Franchise rowFranchise = (Franchise) table.getValueAt(row, franchiseRow);
 		
-		Franchise rowFranchise = (Franchise) table.getValueAt(row, 1);
 		if(cellsToHighlight.size() != 0){
+			int suggestionIdsRow = 0;
+			for(int i = 0; i < table.getColumnCount(); i++){
+				if(table.getColumnName(i).equalsIgnoreCase("suggestionIds")){
+					suggestionIdsRow = i;
+				}
+			}
+			
 			Iterator it = cellsToHighlight.entrySet().iterator();
 			while(it.hasNext()){
 				Map.Entry entry = (Map.Entry)it.next();
-				List<Integer> cell = (List<Integer>) entry.getKey();
-				String value = (String) entry.getValue();
-				if(cell.get(0) == row && cell.get(1) == column){
-					if(value.equals("new")){
+				Integer[] cell = (Integer[]) entry.getKey();
+				String[] value_id = (String[]) entry.getValue();
+				if(cell[0] == row && cell[1] == column){
+					
+					table.setValueAt(value_id[1], row, suggestionIdsRow);
+					if(value_id[0].equals("new")){
 						if(isSelected){
 							component.setBackground(new Color(50,205,50));
 						}else{
 							component.setBackground(Color.GREEN);
 						}
 						component.setForeground(Color.WHITE);
-					}else if(value.equals("delete")){
+					}else if(value_id[0].equals("delete")){
 						if(isSelected){
 							component.setBackground(new Color(205,50,50));
 						}else{
@@ -87,7 +97,7 @@ class JDefaultTableCellRenderer extends DefaultTableCellRenderer {
 						}
 						component.setForeground(Color.WHITE);
 					}else{
-						setText(value);
+						setText(value_id[0]);
 						if(isSelected){
 							Color color = rowFranchise.getMainColor();
 							int[] colors = {color.getRed(), color.getGreen(), color.getBlue()};

@@ -79,9 +79,9 @@ public class JPanelQuiz extends JPanel {
 		gbc_panelMain.gridy = 1;
 		add(panelMain, gbc_panelMain);
 		GridBagLayout gbl_panelMain = new GridBagLayout();
-		gbl_panelMain.columnWidths = new int[]{150, 20, 250, 25, 0};
+		gbl_panelMain.columnWidths = new int[]{25, 150, 20, 250, 25, 0};
 		gbl_panelMain.rowHeights = new int[]{0, 85, 0, 0};
-		gbl_panelMain.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panelMain.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_panelMain.rowWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
 		panelMain.setLayout(gbl_panelMain);
 		
@@ -95,7 +95,7 @@ public class JPanelQuiz extends JPanel {
 		gbc_lblNumber.fill = GridBagConstraints.VERTICAL;
 		gbc_lblNumber.gridheight = 3;
 		gbc_lblNumber.insets = new Insets(0, 0, 0, 5);
-		gbc_lblNumber.gridx = 0;
+		gbc_lblNumber.gridx = 1;
 		gbc_lblNumber.gridy = 0;
 		panelMain.add(lblNumber, gbc_lblNumber);
 		
@@ -105,7 +105,7 @@ public class JPanelQuiz extends JPanel {
 		GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
 		gbc_lblFirstName.anchor = GridBagConstraints.NORTHEAST;
 		gbc_lblFirstName.insets = new Insets(0, 0, 5, 5);
-		gbc_lblFirstName.gridx = 2;
+		gbc_lblFirstName.gridx = 3;
 		gbc_lblFirstName.gridy = 0;
 		panelMain.add(lblFirstName, gbc_lblFirstName);
 		
@@ -115,9 +115,8 @@ public class JPanelQuiz extends JPanel {
 		lblLastName.setBackground(franchise.getBaseColor());
 		lblLastName.setForeground(franchise.getMainColor());
 		GridBagConstraints gbc_lblLastName = new GridBagConstraints();
-		gbc_lblLastName.anchor = GridBagConstraints.EAST;
 		gbc_lblLastName.insets = new Insets(0, 0, 5, 5);
-		gbc_lblLastName.gridx = 2;
+		gbc_lblLastName.gridx = 3;
 		gbc_lblLastName.gridy = 1;
 		panelMain.add(lblLastName, gbc_lblLastName);
 		
@@ -129,7 +128,7 @@ public class JPanelQuiz extends JPanel {
 		GridBagConstraints gbc_lblPosition = new GridBagConstraints();
 		gbc_lblPosition.anchor = GridBagConstraints.SOUTH;
 		gbc_lblPosition.insets = new Insets(0, 0, 0, 5);
-		gbc_lblPosition.gridx = 2;
+		gbc_lblPosition.gridx = 3;
 		gbc_lblPosition.gridy = 2;
 		panelMain.add(lblPosition, gbc_lblPosition);
 	}

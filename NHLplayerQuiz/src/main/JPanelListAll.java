@@ -5,42 +5,28 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.RowSorter.SortKey;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import javax.swing.ListSelectionModel;
 
-public class JPanelListAll extends JPanel {
-	protected ListOfRows<Player> team;
+class JPanelListAll extends JPanel {
 	
 	protected JTable tableMain;
 	protected JLabel lblHeader;
-
-	/**
-	 * Create the panel.
-	 */
-	protected JPanelListAll(ListOfRows<Player> team) {
-		this.team = team;
+	protected JScrollPane scrollPaneMain;
+	
+	protected JPanelListAll() {
 		initialize();
-		setTableData();
 	}
 	
 	protected void initialize(){
@@ -89,7 +75,7 @@ public class JPanelListAll extends JPanel {
 		gbl_panelMain.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		panelMain.setLayout(gbl_panelMain);
 		
-		JScrollPane scrollPaneMain = new JScrollPane();
+		scrollPaneMain = new JScrollPane();
 		scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		GridBagConstraints gbc_scrollPaneMain = new GridBagConstraints();
 		gbc_scrollPaneMain.fill = GridBagConstraints.BOTH;
@@ -115,38 +101,5 @@ public class JPanelListAll extends JPanel {
 	
 	protected JPanelControls setPanelControls(){
 		return new JPanelControls();
-	}
-	
-	protected void setTableData(){
-	}
-	
-	protected void setHeaderLabel(){
-	}
-	
-	protected Object[][] convertData(List<Player> players){
-		List<Object[]> dataHolder = new ArrayList<Object[]>();
-		for(Player player : players){
-			int id = player.getId();
-			Franchise franchise = player.getFranchise();
-			String number = String.valueOf(player.getNumber());
-			String firstName = player.getFirstName();
-			String lastName = player.getLastName();
-			String position = player.getPosition().toString();
-			dataHolder.add(new Object[]{id, franchise, number, firstName, lastName, position});
-		}
-		Object[][] data = new Object[dataHolder.size()][];
-		data = dataHolder.toArray(data);
-		return data;
-	}
-	
-	protected void setColumnRenderers()	{
-		for(int i = 0; i < 2; i++){
-			tableMain.getColumnModel().getColumn(i).setMinWidth(0);
-			tableMain.getColumnModel().getColumn(i).setMaxWidth(0);
-		}
-		for(int i = 2; i < tableMain.getColumnCount(); i++){
-			TableColumn column = tableMain.getColumn(tableMain.getColumnName(i));
-			column.setCellRenderer(new JDefaultTableCellRenderer());
-		}
 	}
 }

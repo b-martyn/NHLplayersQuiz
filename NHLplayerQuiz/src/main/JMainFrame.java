@@ -225,7 +225,7 @@ public class JMainFrame {
 				try{
 					panelControls.setPlayer(new DbConnection(TeamName.valueOf(franchise.getTeamName().toUpperCase())).getPlayer(playerId));
 				}catch(SQLException sqle){
-					// TODO Auto-generated catch block
+					// TODO WAY TOO RESOURCE HEAVY (load full player list on initial load?)
 					sqle.printStackTrace();
 				}
 			}
