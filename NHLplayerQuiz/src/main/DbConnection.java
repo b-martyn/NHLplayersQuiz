@@ -38,6 +38,8 @@ class DbConnection {
 	//number of votes it takes to update player db.
 	private static final int VOTE_LIMIT = 10;
 	
+	private static int number = 1;
+	
 	private TeamName teamName;
 	private JdbcRowSet playerData;
 	private JdbcRowSet updatePlayerData;
@@ -50,6 +52,7 @@ class DbConnection {
 	private void initializeConnections(TeamName teamName) throws SQLException{
 		initializePlayerData(teamName);
 		initializePlayerUpdates();
+		System.out.println(number++);
 	}
 
 	private void initializePlayerData(TeamName teamName) throws SQLException {

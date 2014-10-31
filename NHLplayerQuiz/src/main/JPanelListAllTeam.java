@@ -8,9 +8,12 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 public class JPanelListAllTeam extends JPanelListAll {
+	private ListOfRows<Player> team;
 	
 	JPanelListAllTeam(ListOfRows<Player> team){
-		super(team);
+		super();
+		this.team = team;
+		setTableData();
 	}
 	
 	@Override
@@ -18,7 +21,6 @@ public class JPanelListAllTeam extends JPanelListAll {
 		return new JPanelControls(1, 2, 3, 5, 6);
 	}
 	
-	@Override
 	protected void setTableData(){
 		List<Player> activePlayers = new ArrayList<Player>();
 		for(Player player : team.getList()){
@@ -32,12 +34,10 @@ public class JPanelListAllTeam extends JPanelListAll {
 		setColumnRenderers();
 	}
 	
-	@Override
 	protected void setHeaderLabel(){
 		lblHeader.setText(team.getRandomRow().getFranchise().getProvince() + " " + team.getRandomRow().getFranchise().getTeamName());
 	}
 	
-	@Override
 	protected void setColumnRenderers()	{
 		for(int i = 0; i < 2; i++){
 			tableMain.getColumnModel().getColumn(i).setMinWidth(0);
@@ -52,5 +52,21 @@ public class JPanelListAllTeam extends JPanelListAll {
 			TableColumn column = tableMain.getColumn(tableMain.getColumnName(i));
 			column.setCellRenderer(new JDefaultTableCellRenderer());
 		}
+	}
+	
+	protected Object[][] convertData(List<Player> players){
+		List<Object[]> dataHolder = new ArrayList<Object[]>();
+		for(Player player : players){
+			int id = player.getId();
+			Franchise franchise = player.getFranchise();
+			String number = String.valueOf(player.getNumber());
+			String firstName = player.getFirstName();
+			String lastName = player.getLastName();
+			String position = player.getPosition().toString();
+			dataHolder.add(new Object[]{id, franchise, number, firstName, lastName, position});
+		}
+		Object[][] data = new Object[dataHolder.size()][];
+		data = dataHolder.toArray(data);
+		return data;
 	}
 }

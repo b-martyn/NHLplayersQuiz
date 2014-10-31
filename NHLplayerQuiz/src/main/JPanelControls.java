@@ -146,5 +146,6 @@ class JPanelControls extends JPanel {
 	
 	void setPlayer(Player player){
 		this.player = player;
+		btnEdit.setText(player.getLastName() + " is Wrong");
 	}
 }
