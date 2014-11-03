@@ -77,32 +77,14 @@ class DbConnection {
 			String firstName = playerData.getString("firstName");
 			String lastName = playerData.getString("lastName");
 			String position = playerData.getString("position");
-			TeamName teamName = TeamName.valueOf(playerData.getString("team")
-					.toUpperCase());
+			TeamName teamName = TeamName.valueOf(playerData.getString("team").toUpperCase());
 			int number = playerData.getInt("number");
 			boolean active = playerData.getBoolean("active");
-			Player player = new Player(id, firstName, lastName, teamName,
-					Position.valueOf(position), number, active);
+			Player player = new Player(id, firstName, lastName, teamName, Position.valueOf(position), number, active);
 			players.add(player);
 		}
 		return new ListOfRows<Player>(players);
 	}
-
-	/*
-	 * ListOfRows<Suggestion> getSuggestions(TeamName teamName) throws
-	 * SQLException{ List<Suggestion> suggestions = new ArrayList<Suggestion>();
-	 * playerData.beforeFirst(); while(playerData.next()){
-	 * updatePlayerData.beforeFirst(); while(updatePlayerData.next()){
-	 * if(playerData.getInt("id")==updatePlayerData.getInt("playerId") &&
-	 * playerData.getString("team").equals(teamName.toString())){ int idNumber =
-	 * updatePlayerData.getInt("id"); int playerId =
-	 * updatePlayerData.getInt("playerId"); DbPlayerField field =
-	 * DbPlayerField.valueOf(updatePlayerData.getString("playerField")); String
-	 * value = updatePlayerData.getString("playerNewValue"); int numOfVotes =
-	 * updatePlayerData.getInt("numOfVotes"); suggestions.add(new
-	 * Suggestion(idNumber, playerId, field, value, numOfVotes)); } } } return
-	 * new ListOfRows<Suggestion>(suggestions); }
-	 */
 
 	ListOfRows<Suggestion> getSuggestions() throws SQLException {
 		List<Suggestion> suggestions = new ArrayList<Suggestion>();
@@ -110,62 +92,46 @@ class DbConnection {
 		while (updatePlayerData.next()) {
 			int idNumber = updatePlayerData.getInt("id");
 			int playerId = updatePlayerData.getInt("playerId");
-			DbPlayerField field = DbPlayerField.valueOf(updatePlayerData
-					.getString("playerField"));
+			DbPlayerField field = DbPlayerField.valueOf(updatePlayerData.getString("playerField"));
 			String value = updatePlayerData.getString("playerNewValue");
 			int numOfVotes = updatePlayerData.getInt("numOfVotes");
-			suggestions.add(new Suggestion(idNumber, playerId, field, value,
-					numOfVotes));
+			suggestions.add(new Suggestion(idNumber, playerId, field, value, numOfVotes));
 		}
 		return new ListOfRows<Suggestion>(suggestions);
 	}
 
-	void vote(Suggestion suggestion, boolean voteUp) throws SQLException {
+	void vote(Suggestion suggestion, int voteCount) throws SQLException {
 		if (checkOccurance(suggestion)) {
 			updatePlayerData.beforeFirst();
 			while (updatePlayerData.next()) {
 				if (updatePlayerData.getInt("id") == suggestion.getId()) {
 					int numOfVotes = updatePlayerData.getInt("numOfVotes");
-					int voteCount = 0;
-					if (voteUp) {
-						voteCount = 1;
-					} else {
-						voteCount = -1;
-					}
 					if (numOfVotes < VOTE_LIMIT) {
-						updatePlayerData.updateInt("numOfVotes", numOfVotes
-								+ voteCount);
+						updatePlayerData.updateInt("numOfVotes", numOfVotes	+ voteCount);
 						updatePlayerData.updateRow();
 						return;
 					} else {
 						playerData.beforeFirst();
 						while (playerData.next()) {
-							if (suggestion.getPlayerId() == playerData
-									.getInt("id")) {
+							if (suggestion.getPlayerId() == playerData.getInt("id")) {
 								switch (suggestion.getField()) {
 								case active:
-									playerData.updateBoolean("active", Boolean
-											.valueOf(suggestion.getValue()));
+									playerData.updateBoolean("active", Boolean.valueOf(suggestion.getValue()));
 									return;
 								case firstName:
-									playerData.updateString("firstName",
-											suggestion.getValue());
+									playerData.updateString("firstName", suggestion.getValue());
 									return;
 								case lastName:
-									playerData.updateString("lastName",
-											suggestion.getValue());
+									playerData.updateString("lastName",	suggestion.getValue());
 									return;
 								case team:
-									playerData.updateString("team",
-											suggestion.getValue());
+									playerData.updateString("team",	suggestion.getValue());
 									return;
 								case position:
-									playerData.updateString("position",
-											suggestion.getValue());
+									playerData.updateString("position",	suggestion.getValue());
 									return;
 								case number:
-									playerData.updateInt("number", Integer
-											.valueOf(suggestion.getValue()));
+									playerData.updateInt("number", Integer.valueOf(suggestion.getValue()));
 									return;
 								default:
 									throw new SQLException(
@@ -186,22 +152,19 @@ class DbConnection {
 
 	void addNewSuggestion(Player player, Suggestion suggestion)
 			throws SQLException {
-		if (suggestion.getField() == DbPlayerField.active
-				&& suggestion.getValue().equalsIgnoreCase("true")) {
+		if (suggestion.getField() == DbPlayerField.active && suggestion.getValue().equalsIgnoreCase("true")) {
 			if (!checkOccurance(player)) {
 				createNewPlayer(player);
 				suggestion.setPlayerId(player.getId());
 			}
 		}
 		if (checkOccurance(suggestion)) {
-			vote(suggestion, true);
+			vote(suggestion, 1);
 		} else {
 			updatePlayerData.moveToInsertRow();
 			updatePlayerData.updateInt("playerId", player.getId());
-			updatePlayerData.updateString("playerField", suggestion.getField()
-					.toString());
-			updatePlayerData.updateString("playerNewValue",
-					suggestion.getValue());
+			updatePlayerData.updateString("playerField", suggestion.getField().toString());
+			updatePlayerData.updateString("playerNewValue",	suggestion.getValue());
 			updatePlayerData.updateInt("numOfVotes", 1);
 			updatePlayerData.insertRow();
 		}
@@ -214,14 +177,11 @@ class DbConnection {
 				int id = playerData.getInt("id");
 				String firstName = playerData.getString("firstName");
 				String lastName = playerData.getString("lastName");
-				TeamName teamName = TeamName.valueOf(playerData.getString(
-						"team").toUpperCase());
-				Position position = Position.valueOf(playerData
-						.getString("position"));
+				TeamName teamName = TeamName.valueOf(playerData.getString("team").toUpperCase());
+				Position position = Position.valueOf(playerData.getString("position"));
 				int number = playerData.getInt("number");
 				boolean active = playerData.getBoolean("active");
-				return new Player(id, firstName, lastName, teamName, position,
-						number, active);
+				return new Player(id, firstName, lastName, teamName, position, number, active);
 			}
 		}
 		return null;
@@ -233,10 +193,8 @@ class DbConnection {
 			playerData.updateBoolean("active", true);
 			playerData.updateString("firstName", player.getFirstName());
 			playerData.updateString("lastName", player.getLastName());
-			playerData
-					.updateString("team", player.getFranchise().getTeamName());
-			playerData
-					.updateString("position", player.getPosition().toString());
+			playerData.updateString("team", player.getFranchise().getTeamName());
+			playerData.updateString("position", player.getPosition().toString());
 			playerData.updateInt("number", player.getNumber());
 			playerData.insertRow();
 			playerData.last();
@@ -248,8 +206,7 @@ class DbConnection {
 		playerData.beforeFirst();
 		while (playerData.next()) {
 			if (playerData.getString("firstName").equals(player.getFirstName())
-					&& playerData.getString("lastName").equals(
-							player.getLastName())) {
+					&& playerData.getString("lastName").equals(player.getLastName())) {
 				if (player.getId() == 0) {
 					player.setId(playerData.getInt("id"));
 				}
@@ -268,12 +225,9 @@ class DbConnection {
 		while (updatePlayerData.next()) {
 			if (suggestionId == updatePlayerData.getInt("id")) {
 				return true;
-			} else if (suggestionPlayerId == updatePlayerData
-					.getInt("playerId")
-					&& suggestionField.equals(updatePlayerData
-							.getString("playerField"))
-					&& suggestionValue.equals(updatePlayerData
-							.getString("playerNewValue"))) {
+			} else if (suggestionPlayerId == updatePlayerData.getInt("playerId")
+					&& suggestionField.equals(updatePlayerData.getString("playerField"))
+					&& suggestionValue.equals(updatePlayerData.getString("playerNewValue"))) {
 				if (suggestionId == 0) {
 					suggestion.setId(updatePlayerData.getInt("id"));
 				}

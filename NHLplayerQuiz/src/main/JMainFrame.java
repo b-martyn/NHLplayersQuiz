@@ -27,8 +27,10 @@ public class JMainFrame {
 	private JPanel panelContainer = new JPanel();
 	private JPanelHome panelHome = new JPanelHome();
 	private JPanelQuiz panelQuiz;
-	private ScrollTeam panelTeam;
-	private ScrollSuggestions panelSuggestions;
+	
+	private JPanel panelTeam;
+	private JPanel panelSuggestions;
+	
 	private JPanelControls panelControls;
 
 	public static void main(String[] args) {
@@ -162,36 +164,37 @@ public class JMainFrame {
 	}
 
 	private void teamChange() {
-		TeamName teamName = TeamName.valueOf(franchise.getTeamName()
-				.toUpperCase());
+		TeamName teamName = TeamName.valueOf(franchise.getTeamName().toUpperCase());
 
 		panelQuiz = new JPanelQuiz(createTeam(teamName));
-		panelTeam = new ScrollTeam(createTeam(teamName));
-		panelSuggestions = new ScrollSuggestions(getEditedPlayerList(),	Player_Updates);
-		panelSuggestions.getMainPanel().addPropertyChangeListener("vote", new PropertyChangeListener() {
+		panelTeam = new ScrollPaneFactory(createTeam(teamName)).getScrollPanel();
+		panelSuggestions = new ScrollPaneFactory(getEditedPlayerList(), Player_Updates).getScrollPanel();
+		panelSuggestions.addPropertyChangeListener("vote", new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent e) {
-				boolean voteUp = (boolean) e.getOldValue();
-				Integer[] suggestionIds = (Integer[]) e.getNewValue();
-				for (int id : suggestionIds) {
-					try {
-						DB_Connection.vote(Player_Updates.getRow(id), voteUp);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				int voteCount = (int) e.getOldValue();
+				int suggestionIds = (int) e.getNewValue();
+				if(suggestionIds == 0){
+					suggestionIds = 1;
 				}
+				System.out.println(Player_Updates.getRow(suggestionIds));
+				/*try {
+					DB_Connection.vote(Player_Updates.getRow(suggestionIds), voteCount);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}*/
 			}
 		});
 
 		addListeners(panelQuiz);
-		addListeners(panelTeam.getMainPanel());
-		addListeners(panelSuggestions.getMainPanel());
+		addListeners(panelTeam);
+		addListeners(panelSuggestions);
 		addListeners(panelHome);
 
 		panelContainer.add(panelQuiz, "quiz");
-		panelContainer.add(panelTeam.getMainPanel(), "team");
-		panelContainer.add(panelSuggestions.getMainPanel(), "vote");
+		panelContainer.add(panelTeam, "team");
+		panelContainer.add(panelSuggestions, "vote");
 
 		GridBagConstraints gbc_panelContainer = new GridBagConstraints();
 		gbc_panelContainer.insets = new Insets(0, 0, 0, 0);
@@ -239,8 +242,7 @@ public class JMainFrame {
 	}
 
 	private void addListeners(JPanel panel) {
-		panel.addPropertyChangeListener("buttonClicked",
-				new PropertyChangeListener() {
+		panel.addPropertyChangeListener("buttonClicked", new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent e) {
 						String newValue = (String) e.getNewValue();
@@ -249,8 +251,7 @@ public class JMainFrame {
 
 				});
 
-		panel.addPropertyChangeListener("playerChange",
-				new PropertyChangeListener() {
+		panel.addPropertyChangeListener("playerChange",	new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent e) {
 						int playerId = (int) e.getNewValue();

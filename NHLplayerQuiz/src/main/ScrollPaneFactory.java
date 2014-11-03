@@ -10,7 +10,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +35,7 @@ public class ScrollPaneFactory {
 	private ListOfRows<Player> team;
 	private JPanel scrollPanel;
 	private JTable table;
+	
 	//1 for just Table in scroll pane, 2 for buttons and Table in scrollPane
 	private int tableNumber;
 	
@@ -93,7 +93,7 @@ public class ScrollPaneFactory {
 		gbl_headerPanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		headerPanel.setLayout(gbl_headerPanel);
 		
-		JLabel headerLabel = new JLabel();
+		JLabel headerLabel = new JLabel("This is the Header Label");
 		headerLabel.setFont(new Font("Tahoma", Font.PLAIN, 55));
 		headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_headerLabel = new GridBagConstraints();
@@ -122,7 +122,11 @@ public class ScrollPaneFactory {
 		double[] columnWeights = new double[columnCount];
 		for (int i = 0; i < columnCount; i++) {
 			columnWidths[i] = 0;
-			columnWeights[i] = 0.0;
+			if(i == 0){
+				columnWeights[i] = 1.0;
+			}else{
+				columnWeights[i] = 0.0;
+			}
 		}
 		gbl_scrollPaneView.columnWidths = columnWidths;
 		gbl_scrollPaneView.columnWeights = columnWeights;
@@ -165,8 +169,11 @@ public class ScrollPaneFactory {
 						for (int i = 0; i < strings.length; i++) {
 							if (!strings[i].isEmpty()) {
 								int suggestionId = Integer.parseInt(strings[i]);
-								if(suggestionId > 0){
-									button.firePropertyChange("vote", 1, suggestionId);
+								if(suggestionId == 1){
+									scrollPanel.firePropertyChange("vote", 1, 0);
+								}
+								else if(suggestionId > 1){
+									scrollPanel.firePropertyChange("vote", 1, suggestionId);
 								}
 							}
 						}
@@ -191,7 +198,7 @@ public class ScrollPaneFactory {
 							if (!strings[i].isEmpty()) {
 								int suggestionId = Integer.parseInt(strings[i]);
 								if(suggestionId > 0){
-									button.firePropertyChange("vote", -1, suggestionId);
+									scrollPanel.firePropertyChange("vote", -1, suggestionId);
 								}
 							}
 						}
@@ -215,7 +222,7 @@ public class ScrollPaneFactory {
 			public void valueChanged(ListSelectionEvent e) {
 				if (table.getSelectedRow() >= 0) {
 					int playerId = (int) table.getValueAt(table.getSelectedRow(), 0);
-					table.firePropertyChange("playerChange", -1, playerId);
+					scrollPanel.firePropertyChange("playerChange", -1, playerId);
 				}
 			}
 		});
