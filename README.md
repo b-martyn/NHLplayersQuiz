@@ -1,4 +1,4 @@
-NHLplayersQuiz
+NHL Players Quiz
 ==============
 ~Developed by Brian Martyn
 
