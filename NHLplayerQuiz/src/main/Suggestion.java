@@ -1,28 +1,29 @@
 package main;
 
-public class Suggestion {
+public class Suggestion implements Searchable {
 	private int id;
 	private int playerId;
 	private DbPlayerField field;
 	private String value;
 	private int numOfVotes;
 
-	public Suggestion(int playerId, DbPlayerField field, String value){
+	public Suggestion(int playerId, DbPlayerField field, String value) {
 		this(0, playerId, field, value, 1);
 	}
-	
-	public Suggestion(int id, int playerId, DbPlayerField field, String value, int numOfVotes) {
+
+	public Suggestion(int id, int playerId, DbPlayerField field, String value,
+			int numOfVotes) {
 		this.id = id;
 		this.playerId = playerId;
 		this.field = field;
 		this.value = value;
 		this.numOfVotes = numOfVotes;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -58,9 +59,11 @@ public class Suggestion {
 	public void setNumOfVotes(int numOfVotes) {
 		this.numOfVotes = numOfVotes;
 	}
-	
+
 	@Override
-	public String toString(){
-		return "id: " + this.id + " , playerId: " + this.playerId + " , field: " + this.field + " , value: " + this.value + " , numOfVotes: " + this.numOfVotes;
+	public String toString() {
+		return "id: " + this.id + " , playerId: " + this.playerId
+				+ " , field: " + this.field + " , value: " + this.value
+				+ " , numOfVotes: " + this.numOfVotes;
 	}
 }

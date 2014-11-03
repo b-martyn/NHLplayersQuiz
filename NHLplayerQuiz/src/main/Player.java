@@ -1,6 +1,6 @@
 package main;
 
-public class Player {
+public class Player implements Searchable {
 	private int id;
 	private String firstName;
 	private String lastName;
@@ -8,8 +8,9 @@ public class Player {
 	private Position position;
 	private int number;
 	private boolean active;
-	
-	public Player(int id, String firstName, String lastName, TeamName teamName, Position position, int number, boolean active){
+
+	public Player(int id, String firstName, String lastName, TeamName teamName,
+			Position position, int number, boolean active) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -18,18 +19,20 @@ public class Player {
 		this.number = number;
 		this.active = active;
 	}
-	public Player(String firstName, String lastName, TeamName teamName, Position position, int number){
+
+	public Player(String firstName, String lastName, TeamName teamName,
+			Position position, int number) {
 		this(0, firstName, lastName, teamName, position, number, true);
 	}
 
 	public int getId() {
 		return id;
 	}
-	
+
 	void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -70,33 +73,34 @@ public class Player {
 	void setNumber(int number) {
 		this.number = number;
 	}
-	
-	void setActive(boolean active){
+
+	void setActive(boolean active) {
 		this.active = active;
 	}
-	
-	boolean isActive(){
+
+	boolean isActive() {
 		return active;
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if(o instanceof Player){
-			Player compare = (Player)o;
-			if(firstName.equals(compare.getFirstName()) &&
-					lastName.equals(compare.getLastName()) &&
-					franchise.getTeamName().equals(compare.getFranchise().getTeamName()) &&
-					position.equals(compare.getPosition()) &&
-					number == compare.getNumber()){
+	public boolean equals(Object o) {
+		if (o instanceof Player) {
+			Player compare = (Player) o;
+			if (firstName.equals(compare.getFirstName())
+					&& lastName.equals(compare.getLastName())
+					&& franchise.getTeamName().equals(
+							compare.getFranchise().getTeamName())
+					&& position.equals(compare.getPosition())
+					&& number == compare.getNumber()) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		int hash = 7;
 		hash *= number;
 		hash *= firstName.length();
@@ -108,9 +112,12 @@ public class Player {
 		hash *= franchise.toString().length();
 		return hash;
 	}
-	
+
 	@Override
-	public String toString(){
-		return "ID: " + this.id + ", First Name: " + this.firstName + " Last Name: " + this.lastName + ", Team: " + this.franchise.toString() + ", Position: " + this.position + ", Number: " + this.number;
+	public String toString() {
+		return "ID: " + this.id + ", First Name: " + this.firstName
+				+ " Last Name: " + this.lastName + ", Team: "
+				+ this.franchise.toString() + ", Position: " + this.position
+				+ ", Number: " + this.number;
 	}
 }

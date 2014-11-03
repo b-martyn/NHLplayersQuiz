@@ -43,19 +43,19 @@ public class JDialogEdit extends JDialog {
 	private JTextField txtFieldNumber;
 	private JTextField txtFieldFirstName;
 	private JTextField txtFieldLastName;
-	
-	JDialogEdit(){
+
+	JDialogEdit() {
 		this(null);
 	}
-	
-	JDialogEdit(Player player){
+
+	JDialogEdit(Player player) {
 		this.player = player;
 		initialize();
 		setFields();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
-	
+
 	private void initialize() {
 		setResizable(false);
 		setBounds(100, 100, 228, 193);
@@ -63,10 +63,11 @@ public class JDialogEdit extends JDialog {
 		panelMain.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(panelMain, BorderLayout.CENTER);
 		GridBagLayout gbl_panelMain = new GridBagLayout();
-		gbl_panelMain.columnWidths = new int[]{0, 0, 0};
-		gbl_panelMain.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panelMain.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panelMain.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelMain.columnWidths = new int[] { 0, 0, 0 };
+		gbl_panelMain.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
+		gbl_panelMain.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panelMain.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		panelMain.setLayout(gbl_panelMain);
 		{
 			JLabel lblTeam = new JLabel("Team");
@@ -84,7 +85,7 @@ public class JDialogEdit extends JDialog {
 			defaultBorder = txtFieldTeam.getBorder();
 			{
 				JPopupMenu popupMenuTeam = new JPopupMenu();
-				for(TeamName teamName : TeamName.values()){
+				for (TeamName teamName : TeamName.values()) {
 					JTextField menuItem = new JTextField(teamName.toString());
 					menuItem.setBackground(Color.WHITE);
 					menuItem.setEditable(false);
@@ -94,18 +95,20 @@ public class JDialogEdit extends JDialog {
 							JTextField field = (JTextField) e.getSource();
 							field.setBackground(Color.LIGHT_GRAY);
 						}
-						
+
 						@Override
 						public void mouseExited(MouseEvent e) {
 							JTextField field = (JTextField) e.getSource();
 							field.setBackground(Color.WHITE);
 						}
-						
+
 						@Override
-						public void mouseReleased(MouseEvent e){
+						public void mouseReleased(MouseEvent e) {
 							JTextField field = (JTextField) e.getSource();
-							TeamName teamName = TeamName.valueOf(field.getText().toUpperCase());
-							txtFieldTeam.setText(teamName.value() + " " + teamName.toString());
+							TeamName teamName = TeamName.valueOf(field
+									.getText().toUpperCase());
+							txtFieldTeam.setText(teamName.value() + " "
+									+ teamName.toString());
 							field.getParent().setVisible(false);
 						}
 					});
@@ -196,7 +199,7 @@ public class JDialogEdit extends JDialog {
 			txtFieldPosition.setEditable(false);
 			{
 				JPopupMenu popupMenuPosition = new JPopupMenu();
-				for(Position position : Position.values()){
+				for (Position position : Position.values()) {
 					JTextField menuItem = new JTextField(position.toString());
 					menuItem.setBackground(Color.WHITE);
 					menuItem.setEditable(false);
@@ -206,15 +209,15 @@ public class JDialogEdit extends JDialog {
 							JTextField field = (JTextField) e.getSource();
 							field.setBackground(Color.LIGHT_GRAY);
 						}
-						
+
 						@Override
 						public void mouseExited(MouseEvent e) {
 							JTextField field = (JTextField) e.getSource();
 							field.setBackground(Color.WHITE);
 						}
-						
+
 						@Override
-						public void mouseReleased(MouseEvent e){
+						public void mouseReleased(MouseEvent e) {
 							JTextField field = (JTextField) e.getSource();
 							txtFieldPosition.setText(field.getText());
 							field.getParent().setVisible(false);
@@ -239,14 +242,17 @@ public class JDialogEdit extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						if(fieldsAreValid()){
-							if(player != null){
-								if(!player.equals(editedPlayer)){
-									firePropertyChange("playerEdited", getChanges(player, editedPlayer), editedPlayer);
+						if (fieldsAreValid()) {
+							if (player != null) {
+								if (!player.equals(editedPlayer)) {
+									firePropertyChange("playerEdited",
+											getChanges(player, editedPlayer),
+											editedPlayer);
 								}
-							}else{
-								String[] changes = {"active", "TRUE"};
-								firePropertyChange("playerEdited", changes, editedPlayer);
+							} else {
+								String[] changes = { "active", "TRUE" };
+								firePropertyChange("playerEdited", changes,
+										editedPlayer);
 							}
 							dispose();
 						}
@@ -268,125 +274,135 @@ public class JDialogEdit extends JDialog {
 			}
 		}
 	}
-	
-	private void setFields(){
-		if(player != null){
-			txtFieldTeam.setText(player.getFranchise().getProvince() + " " + player.getFranchise().getTeamName());
+
+	private void setFields() {
+		if (player != null) {
+			txtFieldTeam.setText(player.getFranchise().getProvince() + " "
+					+ player.getFranchise().getTeamName());
 			txtFieldNumber.setText(String.valueOf(player.getNumber()));
 			txtFieldFirstName.setText(player.getFirstName());
 			txtFieldLastName.setText(player.getLastName());
 			txtFieldPosition.setText(player.getPosition().toString());
-		}else{
+		} else {
 			txtFieldTeam.setText("Select a Team");
 			txtFieldPosition.setText("Select a Position");
 		}
 	}
-	
-	private boolean fieldsAreValid(){
+
+	private boolean fieldsAreValid() {
 		boolean result = true;
 		String firstName = "";
 		String lastName = "";
 		TeamName teamName = null;
 		Position position = null;
 		int number = 0;
-		try{
+		try {
 			String[] strings = txtFieldTeam.getText().split("\\s");
 			teamName = TeamName.valueOf(strings[1].toUpperCase());
-		}catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			result = false;
-			txtFieldTeam.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			txtFieldTeam
+					.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
 			txtFieldTeam.setForeground(Color.RED);
 		}
-		
-		try{
+
+		try {
 			number = Integer.parseInt(txtFieldNumber.getText());
-			if(number < 1 || number > 99){
-				throw new NumberFormatException("Number is outside of the bounds for a player number");
+			if (number < 1 || number > 99) {
+				throw new NumberFormatException(
+						"Number is outside of the bounds for a player number");
 			}
-			
-		}catch(NumberFormatException e){
+
+		} catch (NumberFormatException e) {
 			result = false;
-			txtFieldNumber.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			txtFieldNumber.setBorder(BorderFactory.createLineBorder(Color.RED,
+					1));
 			txtFieldNumber.setForeground(Color.RED);
 			txtFieldNumber.setText("Enter a number 1-99");
 		}
-		
-		try{
-			if(txtFieldFirstName.getText().isEmpty()){
+
+		try {
+			if (txtFieldFirstName.getText().isEmpty()) {
 				throw new IllegalArgumentException("This field can't be empty");
 			}
 			firstName = formatString(txtFieldFirstName.getText());
-		}catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			result = false;
-			txtFieldFirstName.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			txtFieldFirstName.setBorder(BorderFactory.createLineBorder(
+					Color.RED, 1));
 			txtFieldFirstName.setForeground(Color.RED);
 			txtFieldFirstName.setText(e.getMessage());
 		}
-		
-		try{
-			if(txtFieldLastName.getText().isEmpty()){
+
+		try {
+			if (txtFieldLastName.getText().isEmpty()) {
 				throw new IllegalArgumentException("This field can't be empty");
 			}
 			lastName = formatString(txtFieldLastName.getText());
-		}catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			result = false;
-			txtFieldLastName.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			txtFieldLastName.setBorder(BorderFactory.createLineBorder(
+					Color.RED, 1));
 			txtFieldLastName.setForeground(Color.RED);
 			txtFieldLastName.setText(e.getMessage());
 		}
-		
-		try{
+
+		try {
 			position = Position.valueOf(txtFieldPosition.getText());
-		}catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			result = false;
-			txtFieldPosition.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			txtFieldPosition.setBorder(BorderFactory.createLineBorder(
+					Color.RED, 1));
 			txtFieldPosition.setForeground(Color.RED);
 		}
-		if(result){
-			if(player != null){
-				editedPlayer = new Player(player.getId(), firstName, lastName, teamName, position, number, true);
-			}else{
-				editedPlayer = new Player(firstName, lastName, teamName, position, number);
+		if (result) {
+			if (player != null) {
+				editedPlayer = new Player(player.getId(), firstName, lastName,
+						teamName, position, number, true);
+			} else {
+				editedPlayer = new Player(firstName, lastName, teamName,
+						position, number);
 			}
 		}
 		return result;
 	}
 
-	private class TxtFieldFocusAdapter extends FocusAdapter{
+	private class TxtFieldFocusAdapter extends FocusAdapter {
 		@Override
 		public void focusGained(FocusEvent e) {
-			JTextField field = (JTextField)e.getSource();
-			if(field.getForeground() == Color.RED){
+			JTextField field = (JTextField) e.getSource();
+			if (field.getForeground() == Color.RED) {
 				field.setText("");
 				field.setForeground(Color.BLACK);
 				field.setBorder(defaultBorder);
 			}
 		}
 	}
-	
+
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				showMenu(e);
 			}
+
 			private void showMenu(MouseEvent e) {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
 	}
-	
-	private String formatString(String s){
+
+	private String formatString(String s) {
 		String[] strings = s.split("\\W");
-		
-		for(int i = 0; i < strings.length; i++){
-			if(strings[i].length() > 0){
+
+		for (int i = 0; i < strings.length; i++) {
+			if (strings[i].length() > 0) {
 				StringBuilder sb = new StringBuilder(strings[i].toLowerCase());
 				sb.replace(0, 1, sb.substring(0, 1).toUpperCase());
 				strings[i] = sb.toString();
-			}else{
+			} else {
 				StringBuilder sb = new StringBuilder();
-				for(int j = 0; j < strings.length; j++){
-					if(i == j){
+				for (int j = 0; j < strings.length; j++) {
+					if (i == j) {
 						continue;
 					}
 					sb.append(strings[j] + " ");
@@ -394,34 +410,35 @@ public class JDialogEdit extends JDialog {
 				return formatString(sb.toString());
 			}
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
-		for(String string : strings){
+		for (String string : strings) {
 			sb.append(string + " ");
 		}
 		sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
 	}
-	
-	private String[] getChanges(Player original, Player edited){
+
+	private String[] getChanges(Player original, Player edited) {
 		List<String> changes = new ArrayList<String>();
-		if(!original.getFirstName().equals(edited.getFirstName())){
+		if (!original.getFirstName().equals(edited.getFirstName())) {
 			changes.add("firstName");
 			changes.add(edited.getFirstName());
 		}
-		if(!original.getLastName().equals(edited.getLastName())){
+		if (!original.getLastName().equals(edited.getLastName())) {
 			changes.add("lastName");
 			changes.add(edited.getLastName());
 		}
-		if(!original.getFranchise().getTeamName().equals(edited.getFranchise().getTeamName())){
+		if (!original.getFranchise().getTeamName()
+				.equals(edited.getFranchise().getTeamName())) {
 			changes.add("team");
 			changes.add(edited.getFranchise().getTeamName());
 		}
-		if(!original.getPosition().equals(edited.getPosition())){
+		if (!original.getPosition().equals(edited.getPosition())) {
 			changes.add("position");
 			changes.add(edited.getPosition().toString());
 		}
-		if(!(original.getNumber() == edited.getNumber())){
+		if (!(original.getNumber() == edited.getNumber())) {
 			changes.add("number");
 			changes.add(String.valueOf(edited.getNumber()));
 		}
