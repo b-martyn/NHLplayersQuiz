@@ -27,4 +27,14 @@ public class ListOfRows<T extends Searchable> {
 		}
 		return null;
 	}
+	
+	public boolean deleteRow(int id){
+		for(T row : rows){
+			if(row.getId() == id){
+				rows.remove(row);
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -169,21 +169,27 @@ public class JMainFrame {
 		panelQuiz = new JPanelQuiz(createTeam(teamName));
 		panelTeam = new ScrollPaneFactory(createTeam(teamName)).getScrollPanel();
 		panelSuggestions = new ScrollPaneFactory(getEditedPlayerList(), Player_Updates).getScrollPanel();
+		panelSuggestions.setName("vote");
 		panelSuggestions.addPropertyChangeListener("vote", new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent e) {
 				int voteCount = (int) e.getOldValue();
-				int suggestionIds = (int) e.getNewValue();
-				if(suggestionIds == 0){
-					suggestionIds = 1;
+				int suggestionId = (int) e.getNewValue();
+				if(suggestionId == 0){
+					suggestionId = 1;
 				}
-				System.out.println(Player_Updates.getRow(suggestionIds));
-				/*try {
-					DB_Connection.vote(Player_Updates.getRow(suggestionIds), voteCount);
+				System.out.println(suggestionId);
+				try {
+					DB_Connection.vote(Player_Updates.getRow(suggestionId), voteCount);
+					Player_Updates.deleteRow(suggestionId);
+					panelSuggestions = new ScrollPaneFactory(getEditedPlayerList(), Player_Updates).getScrollPanel();
+					panelContainer.remove(3);
+					panelContainer.add(panelSuggestions, "vote");
+					changePanel("vote");
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}*/
+				}
 			}
 		});
 

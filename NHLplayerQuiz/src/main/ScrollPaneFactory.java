@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -166,6 +168,7 @@ public class ScrollPaneFactory {
 					public void actionPerformed(ActionEvent e) {
 						JButton button = (JButton) e.getSource();
 						String[] strings = ((String) table.getValueAt(Integer.parseInt(button.getName()), 2)).split("|");
+						System.out.println(strings[0]);
 						for (int i = 0; i < strings.length; i++) {
 							if (!strings[i].isEmpty()) {
 								int suggestionId = Integer.parseInt(strings[i]);
@@ -226,6 +229,28 @@ public class ScrollPaneFactory {
 				}
 			}
 		});
+		
+		// Add pop-up menu to row with the suggested change only on table with suggestions
+		if(tableNumber == 2){
+			table.addMouseListener(new MouseListener(){
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.out.println(table.getValueAt(table.getSelectedRow(), 2));
+				}
+				@Override
+				public void mouseEntered(MouseEvent arg0) {
+				}
+				@Override
+				public void mouseExited(MouseEvent arg0) {
+				}
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+				}
+				@Override
+				public void mouseReleased(MouseEvent arg0) {
+				}
+			});
+		}
 		table.setRowHeight(50);
 		table.setModel(getTableModel());
 		setColumnRenderers();
@@ -280,14 +305,16 @@ public class ScrollPaneFactory {
 		}else{
 			hiddenColumns = 2;
 		}
-		
+		// Hide first 2 or 3 columns: id, franchise (suggestionId)
 		for (; i < hiddenColumns; i++) {
 			table.getColumnModel().getColumn(i).setMinWidth(0);
 			table.getColumnModel().getColumn(i).setMaxWidth(0);
 		}
-		table.getColumnModel().getColumn(i).setCellRenderer(new JDefaultTableCellRenderer());
+		// Number column
+		table.getColumnModel().getColumn(i).setCellRenderer(new JDefaultTableCellRenderer(highlightCellMap));
 		table.getColumnModel().getColumn(i).setMinWidth(JDefaultTableCellRenderer.NUMBER_CELL_SIZE.width);
 		table.getColumnModel().getColumn(i).setMaxWidth(JDefaultTableCellRenderer.NUMBER_CELL_SIZE.width);
+		// First/Last name and position columns
 		for (++i; i < table.getColumnCount(); i++) {
 			TableColumn column = table.getColumn(table.getColumnName(i));
 			column.setCellRenderer(new JDefaultTableCellRenderer(highlightCellMap));
@@ -328,7 +355,7 @@ public class ScrollPaneFactory {
 					cell[1] = 5;
 					break;
 				case team:
-					cell[1] = 2;
+					cell[1] = 1;
 					break;
 				case position:
 					cell[1] = 6;
@@ -377,10 +404,10 @@ public class ScrollPaneFactory {
 			}
 			Franchise rowFranchise = (Franchise) table.getValueAt(row, franchiseRow);
 			if (cellsToHighlight.size() != 0) {
-				int suggestionIdsRow = 0;
+				int suggestionIdsColumn = 0;
 				for (int i = 0; i < table.getColumnCount(); i++) {
 					if (table.getColumnName(i).equalsIgnoreCase("suggestionIds")) {
-						suggestionIdsRow = i;
+						suggestionIdsColumn = i;
 					}
 				}
 				Iterator it = cellsToHighlight.entrySet().iterator();
@@ -389,7 +416,7 @@ public class ScrollPaneFactory {
 					Integer[] cell = (Integer[]) entry.getKey();
 					String[] value_id = (String[]) entry.getValue();
 					if (cell[0] == row && cell[1] == column) {
-						table.setValueAt(value_id[1], row, suggestionIdsRow);
+						table.setValueAt(value_id[1], row, suggestionIdsColumn);
 						if (value_id[0].equals("new")) {
 							if (isSelected) {
 								component.setBackground(new Color(50, 205, 50));

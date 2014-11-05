@@ -29,7 +29,7 @@ import javax.sql.rowset.JdbcRowSet;
 import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 
-class DbConnection {
+final class DbConnection {
 	private static final String URL = "jdbc:mysql://173.48.157.224:3306/nhlPlayerQuiz";
 	private static final String USER_NAME = "playerQuizGuest";
 	private static final String PASSWORD = "guest";
@@ -40,8 +40,8 @@ class DbConnection {
 
 	private static int number = 1;
 
-	private JdbcRowSet playerData;
-	private JdbcRowSet updatePlayerData;
+	private static JdbcRowSet playerData;
+	private static JdbcRowSet updatePlayerData;
 
 	DbConnection() throws SQLException {
 		initializePlayerData();
@@ -106,11 +106,14 @@ class DbConnection {
 			while (updatePlayerData.next()) {
 				if (updatePlayerData.getInt("id") == suggestion.getId()) {
 					int numOfVotes = updatePlayerData.getInt("numOfVotes");
-					if (numOfVotes < VOTE_LIMIT) {
+					if(numOfVotes < -(VOTE_LIMIT)){
+						deleteRow(suggestion);
+						return;
+					}else if (numOfVotes < VOTE_LIMIT) {
 						updatePlayerData.updateInt("numOfVotes", numOfVotes	+ voteCount);
 						updatePlayerData.updateRow();
 						return;
-					} else {
+					}else {
 						playerData.beforeFirst();
 						while (playerData.next()) {
 							if (suggestion.getPlayerId() == playerData.getInt("id")) {
@@ -148,6 +151,17 @@ class DbConnection {
 		} else {
 			addNewSuggestion(getPlayer(playerData.getInt("id")), suggestion);
 		}
+	}
+
+	private boolean deleteRow(Suggestion suggestion) throws SQLException {
+		updatePlayerData.beforeFirst();
+		while (updatePlayerData.next()){
+			if(updatePlayerData.getInt("id") == suggestion.getId()){
+				updatePlayerData.deleteRow();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void addNewSuggestion(Player player, Suggestion suggestion)
