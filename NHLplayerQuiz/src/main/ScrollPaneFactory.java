@@ -1,5 +1,22 @@
+/*
+ * +++++++++++++++++Table Without Suggestions+++++++++++++++++++
+ * +----+-----------+--------+-----------+----------+----------+
+ * | id | franchise | number | firstName | lastName | position |
+ * +----+-----------+--------+-----------+----------+----------+
+ * |int | Franchise | String |   String  |  String  |  String  |
+ * +----+-----------+--------+-----------+----------+----------+
+ * 
+ * +++++++++++++++++++++++++Table With Suggestions++++++++++++++++++++++++++
+ * +----+-----------+---------------+--------+---------+--------+----------+
+ * | id | franchise | suggestionIds | number |firstName|lastName| position |
+ * +----+-----------+---------------+--------+---------+--------+----------+
+ * |int | Franchise |    String     | String |  String | String |  String  |
+ * +----+-----------+---------------+--------+---------+--------+----------+
+ */
+
 package main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,8 +26,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,6 +45,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -116,6 +138,7 @@ public class ScrollPaneFactory {
 		int columnCount;
 		if(tableNumber == 2){
 			columnCount = 3;
+			
 		}else{
 			columnCount = 1;
 		}
@@ -218,7 +241,12 @@ public class ScrollPaneFactory {
 	}
 
 	private JTable createTable() {
-		table = new JTable();
+		table = new JTable(){
+			@Override
+			public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend){
+				super.changeSelection(rowIndex, columnIndex, true, extend);
+			}
+		};
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -232,22 +260,20 @@ public class ScrollPaneFactory {
 		
 		// Add pop-up menu to row with the suggested change only on table with suggestions
 		if(tableNumber == 2){
-			table.addMouseListener(new MouseListener(){
+			table.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					System.out.println(table.getValueAt(table.getSelectedRow(), 2));
-				}
-				@Override
-				public void mouseEntered(MouseEvent arg0) {
-				}
-				@Override
-				public void mouseExited(MouseEvent arg0) {
-				}
-				@Override
-				public void mousePressed(MouseEvent arg0) {
-				}
-				@Override
-				public void mouseReleased(MouseEvent arg0) {
+					JTable source = (JTable) e.getSource();
+					int row = source.rowAtPoint(e.getPoint());
+					int column = source.columnAtPoint(e.getPoint());
+					if(e.getButton() == 3){
+						if(!source.isRowSelected(row)){
+							source.changeSelection(row, column, true, false);
+						}
+						JDialog popupPanel = createDialog(team.getRow((int)source.getValueAt(row, 0)), suggestions.getRow(Integer.valueOf((String)source.getValueAt(row, 2))));
+						popupPanel.setLocation(source.getLocationOnScreen().x, source.getLocationOnScreen().y + (source.getRowHeight() * (source.getSelectedRow() + 1)));
+						popupPanel.setVisible(true);
+					}
 				}
 			});
 		}
@@ -256,6 +282,199 @@ public class ScrollPaneFactory {
 		setColumnRenderers();
 		
 		return table;
+	}
+	
+
+
+	private JDialog createDialog(Player player, Suggestion suggestion) {
+		JDialog dialog = new JDialog();
+		JPanel contentPanel = new JPanel();
+		Color baseColor = player.getFranchise().getBaseColor();
+		Color mainColor = player.getFranchise().getMainColor();
+		Color secondaryColor = player.getFranchise().getSecondaryColor();
+		dialog.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				dialog.dispose();
+			}
+		});
+		dialog.setUndecorated(true);
+		dialog.setBounds(100, 100, 450, 73);
+		dialog.getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPanel.setBackground(baseColor);
+		contentPanel.setBorder(new LineBorder(secondaryColor, 3));
+		dialog.getContentPane().add(contentPanel, BorderLayout.CENTER);
+		GridBagLayout gbl_contentPanel = new GridBagLayout();
+		gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		contentPanel.setLayout(gbl_contentPanel);
+		
+		JLabel lblFirstName = new JLabel("First Name");
+		lblFirstName.setForeground(mainColor);
+		GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
+		gbc_lblFirstName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFirstName.gridx = 1;
+		gbc_lblFirstName.gridy = 0;
+		contentPanel.add(lblFirstName, gbc_lblFirstName);
+		
+		JLabel lblLastName = new JLabel("Last Name");
+		lblLastName.setForeground(mainColor);
+		GridBagConstraints gbc_lblLastName = new GridBagConstraints();
+		gbc_lblLastName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLastName.gridx = 2;
+		gbc_lblLastName.gridy = 0;
+		contentPanel.add(lblLastName, gbc_lblLastName);
+		
+		JLabel lblPosition = new JLabel("Position");
+		lblPosition.setForeground(mainColor);
+		GridBagConstraints gbc_lblPosition = new GridBagConstraints();
+		gbc_lblPosition.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPosition.gridx = 3;
+		gbc_lblPosition.gridy = 0;
+		contentPanel.add(lblPosition, gbc_lblPosition);
+		
+		JLabel lblNumber = new JLabel("Number");
+		lblNumber.setForeground(mainColor);
+		GridBagConstraints gbc_lblNumber = new GridBagConstraints();
+		gbc_lblNumber.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNumber.gridx = 4;
+		gbc_lblNumber.gridy = 0;
+		contentPanel.add(lblNumber, gbc_lblNumber);
+		
+		JLabel lblTeam = new JLabel("Team");
+		lblTeam.setForeground(mainColor);
+		GridBagConstraints gbc_lblTeam = new GridBagConstraints();
+		gbc_lblTeam.insets = new Insets(0, 0, 5, 0);
+		gbc_lblTeam.gridx = 5;
+		gbc_lblTeam.gridy = 0;
+		contentPanel.add(lblTeam, gbc_lblTeam);
+		
+		JLabel lblCurrent = new JLabel("Current");
+		lblCurrent.setForeground(mainColor);
+		GridBagConstraints gbc_lblCurrent = new GridBagConstraints();
+		gbc_lblCurrent.insets = new Insets(0, 0, 5, 5);
+		gbc_lblCurrent.gridx = 0;
+		gbc_lblCurrent.gridy = 1;
+		contentPanel.add(lblCurrent, gbc_lblCurrent);
+		
+		JLabel lblCurrentFirstName = new JLabel(player.getFirstName());
+		lblCurrentFirstName.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblCurrentFirstName = new GridBagConstraints();
+		gbc_lblCurrentFirstName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblCurrentFirstName.gridx = 1;
+		gbc_lblCurrentFirstName.gridy = 1;
+		contentPanel.add(lblCurrentFirstName, gbc_lblCurrentFirstName);
+		
+		JLabel lblCurrentLastName = new JLabel(player.getLastName());
+		lblCurrentLastName.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblCurrentLastName = new GridBagConstraints();
+		gbc_lblCurrentLastName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblCurrentLastName.gridx = 2;
+		gbc_lblCurrentLastName.gridy = 1;
+		contentPanel.add(lblCurrentLastName, gbc_lblCurrentLastName);
+		
+		JLabel lblCurrentPosition = new JLabel(player.getPosition().toString());
+		lblCurrentPosition.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblCurrentPosition = new GridBagConstraints();
+		gbc_lblCurrentPosition.insets = new Insets(0, 0, 5, 5);
+		gbc_lblCurrentPosition.gridx = 3;
+		gbc_lblCurrentPosition.gridy = 1;
+		contentPanel.add(lblCurrentPosition, gbc_lblCurrentPosition);
+		
+		JLabel lblCurrentNumber = new JLabel(String.valueOf(player.getNumber()));
+		lblCurrentNumber.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblCurrentNumber = new GridBagConstraints();
+		gbc_lblCurrentNumber.insets = new Insets(0, 0, 5, 5);
+		gbc_lblCurrentNumber.gridx = 4;
+		gbc_lblCurrentNumber.gridy = 1;
+		contentPanel.add(lblCurrentNumber, gbc_lblCurrentNumber);
+		
+		JLabel lblCurrentTeam = new JLabel(player.getFranchise().getTeamName());
+		lblCurrentTeam.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblCurrentTeam = new GridBagConstraints();
+		gbc_lblCurrentTeam.insets = new Insets(0, 0, 5, 0);
+		gbc_lblCurrentTeam.gridx = 5;
+		gbc_lblCurrentTeam.gridy = 1;
+		contentPanel.add(lblCurrentTeam, gbc_lblCurrentTeam);
+	
+		JLabel lblChange = new JLabel("Change");
+		lblChange.setForeground(mainColor);
+		GridBagConstraints gbc_lblChange = new GridBagConstraints();
+		gbc_lblChange.insets = new Insets(0, 0, 0, 5);
+		gbc_lblChange.gridx = 0;
+		gbc_lblChange.gridy = 2;
+		contentPanel.add(lblChange, gbc_lblChange);
+		
+		JLabel lblNewFirstName = new JLabel("");
+		lblNewFirstName.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblNewFirstName = new GridBagConstraints();
+		gbc_lblNewFirstName.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewFirstName.gridx = 1;
+		gbc_lblNewFirstName.gridy = 2;
+		contentPanel.add(lblNewFirstName, gbc_lblNewFirstName);
+		
+		JLabel lblNewLastName = new JLabel("");
+		lblNewLastName.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblNewLastName = new GridBagConstraints();
+		gbc_lblNewLastName.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewLastName.gridx = 2;
+		gbc_lblNewLastName.gridy = 2;
+		contentPanel.add(lblNewLastName, gbc_lblNewLastName);
+		
+		JLabel lblNewPosition = new JLabel("");
+		lblNewPosition.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblNewPosition = new GridBagConstraints();
+		gbc_lblNewPosition.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewPosition.gridx = 3;
+		gbc_lblNewPosition.gridy = 2;
+		contentPanel.add(lblNewPosition, gbc_lblNewPosition);
+		
+		JLabel lblNewNumber = new JLabel("");
+		lblNewNumber.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblNewNumber = new GridBagConstraints();
+		gbc_lblNewNumber.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewNumber.gridx = 4;
+		gbc_lblNewNumber.gridy = 2;
+		contentPanel.add(lblNewNumber, gbc_lblNewNumber);
+	
+		JLabel lblNewTeam = new JLabel("");
+		lblNewTeam.setForeground(secondaryColor);
+		GridBagConstraints gbc_lblNewTeam = new GridBagConstraints();
+		gbc_lblNewTeam.gridx = 5;
+		gbc_lblNewTeam.gridy = 2;
+		contentPanel.add(lblNewTeam, gbc_lblNewTeam);
+		
+		switch(suggestion.getField()){
+			case active:
+				lblNewFirstName.setText("New");
+				lblNewLastName.setText("Player");
+				lblNewTeam.setText("New");
+				lblNewPosition.setText("Player");
+				lblNewNumber.setText("New");
+				break;
+			case firstName:
+				lblNewFirstName.setText(suggestion.getValue());
+				break;
+			case lastName:
+				lblNewLastName.setText(suggestion.getValue());
+				break;
+			case team:
+				lblNewTeam.setText(suggestion.getValue());
+				break;
+			case position:
+				lblNewPosition.setText(suggestion.getValue());
+				break;
+			case number:
+				lblNewNumber.setText(suggestion.getValue());
+				break;
+			default:
+				break;
+		}
+		
+		return dialog;
 	}
 
 	private TableModel getTableModel() {
