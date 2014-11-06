@@ -12,6 +12,7 @@ package main;
 
 import javax.swing.JPanel;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -76,17 +77,17 @@ class JPanelControls extends JPanel {
 
 		btnEdit = new JButton("This Player is Wrong");
 		btnEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				if (player != null) {
+					JButton button = (JButton) e.getSource();
 					JDialogEdit editPlayerDialog = new JDialogEdit(player);
-					editPlayerDialog.addPropertyChangeListener("playerEdited",
-							new PropertyChangeListener() {
-								@Override
-								public void propertyChange(PropertyChangeEvent e) {
-									firePropertyChange("playerEdited",
-											e.getOldValue(), e.getNewValue());
-								}
-							});
+					editPlayerDialog.setLocationRelativeTo(button);
+					editPlayerDialog.addPropertyChangeListener("playerEdited", new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent e) {
+							firePropertyChange("playerEdited", e.getOldValue(), e.getNewValue());
+						}
+					});
 				}
 			}
 		});
@@ -95,16 +96,16 @@ class JPanelControls extends JPanel {
 
 		btnNew = new JButton("Add Missing Player");
 		btnNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
+				JButton button = (JButton) e.getSource();
 				JDialogEdit newPlayerDialog = new JDialogEdit();
-				newPlayerDialog.addPropertyChangeListener("playerEdited",
-						new PropertyChangeListener() {
-							@Override
-							public void propertyChange(PropertyChangeEvent e) {
-								firePropertyChange("playerEdited",
-										e.getOldValue(), e.getNewValue());
-							}
-						});
+				newPlayerDialog.setLocationRelativeTo(button);
+				newPlayerDialog.addPropertyChangeListener("playerEdited", new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent e) {
+						firePropertyChange("playerEdited", e.getOldValue(), e.getNewValue());
+					}
+				});
 			}
 		});
 		btnNew.setVisible(false);

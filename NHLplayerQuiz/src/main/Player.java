@@ -9,8 +9,7 @@ public class Player implements Searchable {
 	private int number;
 	private boolean active;
 
-	public Player(int id, String firstName, String lastName, TeamName teamName,
-			Position position, int number, boolean active) {
+	public Player(int id, String firstName, String lastName, TeamName teamName,	Position position, int number, boolean active) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -20,8 +19,7 @@ public class Player implements Searchable {
 		this.active = active;
 	}
 
-	public Player(String firstName, String lastName, TeamName teamName,
-			Position position, int number) {
+	public Player(String firstName, String lastName, TeamName teamName,	Position position, int number) {
 		this(0, firstName, lastName, teamName, position, number, true);
 	}
 

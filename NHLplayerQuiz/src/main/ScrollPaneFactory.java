@@ -237,6 +237,7 @@ public class ScrollPaneFactory {
 		}
 		
 		scrollPane.setViewportView(scrollPaneView);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(table.getRowHeight() / 2);
 		return scrollPane;
 	}
 

@@ -77,7 +77,17 @@ final class DbConnection {
 			String firstName = playerData.getString("firstName");
 			String lastName = playerData.getString("lastName");
 			String position = playerData.getString("position");
-			TeamName teamName = TeamName.valueOf(playerData.getString("team").toUpperCase());
+			
+			String[] strings = playerData.getString("team").toUpperCase().split(" ");
+			StringBuilder sbTeamName = new StringBuilder();
+			for(int i = 0; i < strings.length; i++){
+				if(sbTeamName.length() != 0){
+					sbTeamName.append("_");
+				}
+				sbTeamName.append(strings[i].toUpperCase());
+			}
+			TeamName teamName = TeamName.valueOf(sbTeamName.toString());
+			
 			int number = playerData.getInt("number");
 			boolean active = playerData.getBoolean("active");
 			Player player = new Player(id, firstName, lastName, teamName, Position.valueOf(position), number, active);

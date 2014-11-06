@@ -124,7 +124,7 @@ public class JMainFrame {
 
 		frame.getContentPane().add(panelContainer, gbc_panelContainer);
 
-		panelControls = new JPanelControls(0);
+		panelControls = new JPanelControls(6);
 		panelControls.addPropertyChangeListener("buttonClicked",
 				new PropertyChangeListener() {
 					@Override
@@ -164,7 +164,15 @@ public class JMainFrame {
 	}
 
 	private void teamChange() {
-		TeamName teamName = TeamName.valueOf(franchise.getTeamName().toUpperCase());
+		String[] strings = franchise.getTeamName().toUpperCase().split(" ");
+		StringBuilder sbTeamName = new StringBuilder();
+		for(int i = 0; i < strings.length; i++){
+			if(sbTeamName.length() != 0){
+				sbTeamName.append("_");
+			}
+			sbTeamName.append(strings[i]);
+		}
+		TeamName teamName = TeamName.valueOf(sbTeamName.toString());
 
 		panelQuiz = new JPanelQuiz(createTeam(teamName));
 		panelTeam = new ScrollPaneFactory(createTeam(teamName)).getScrollPanel();
@@ -239,7 +247,7 @@ public class JMainFrame {
 			panelControls.showButtons(1, 3, 4, 5, 6);
 			break;
 		case "home":
-			panelControls.showButtons(0);
+			panelControls.showButtons(6);
 			break;
 		default:
 			panelControls.showButtons();
@@ -254,7 +262,6 @@ public class JMainFrame {
 						String newValue = (String) e.getNewValue();
 						changePanel(newValue);
 					}
-
 				});
 
 		panel.addPropertyChangeListener("playerChange",	new PropertyChangeListener() {

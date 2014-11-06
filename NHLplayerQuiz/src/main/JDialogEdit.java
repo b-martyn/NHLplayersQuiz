@@ -105,10 +105,8 @@ public class JDialogEdit extends JDialog {
 						@Override
 						public void mouseReleased(MouseEvent e) {
 							JTextField field = (JTextField) e.getSource();
-							TeamName teamName = TeamName.valueOf(field
-									.getText().toUpperCase());
-							txtFieldTeam.setText(teamName.value() + " "
-									+ teamName.toString());
+							TeamName teamName = TeamName.valueOf(field.getText().toUpperCase().replace(" ", "_"));
+							txtFieldTeam.setText(teamName.value() + " "	+ teamName.toString());
 							field.getParent().setVisible(false);
 						}
 					});
@@ -298,11 +296,17 @@ public class JDialogEdit extends JDialog {
 		int number = 0;
 		try {
 			String[] strings = txtFieldTeam.getText().split("\\s");
-			teamName = TeamName.valueOf(strings[1].toUpperCase());
+			StringBuilder sbTeamName = new StringBuilder();
+			for(int i = 1; i < strings.length; i++){
+				if(sbTeamName.length() != 0){
+					sbTeamName.append("_");
+				}
+				sbTeamName.append(strings[i].toUpperCase());
+			}
+			teamName = TeamName.valueOf(sbTeamName.toString());
 		} catch (IllegalArgumentException e) {
 			result = false;
-			txtFieldTeam
-					.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			txtFieldTeam.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
 			txtFieldTeam.setForeground(Color.RED);
 		}
 
@@ -398,6 +402,11 @@ public class JDialogEdit extends JDialog {
 			if (strings[i].length() > 0) {
 				StringBuilder sb = new StringBuilder(strings[i].toLowerCase());
 				sb.replace(0, 1, sb.substring(0, 1).toUpperCase());
+				if(sb.length() > 3){
+					if(sb.charAt(1) == 'c'){
+						sb.replace(2, 3, sb.substring(2, 3).toUpperCase());
+					}
+				}
 				strings[i] = sb.toString();
 			} else {
 				StringBuilder sb = new StringBuilder();

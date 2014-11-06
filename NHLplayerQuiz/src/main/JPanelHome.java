@@ -11,6 +11,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.ScrollPaneConstants;
 
 public class JPanelHome extends JPanel {
 
@@ -27,6 +28,7 @@ public class JPanelHome extends JPanel {
 		setLayout(gridBagLayout);
 
 		JScrollPane scrollPaneMain = new JScrollPane();
+		scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		GridBagConstraints gbc_scrollPaneMain = new GridBagConstraints();
 		gbc_scrollPaneMain.fill = GridBagConstraints.BOTH;
 		gbc_scrollPaneMain.gridx = 0;
@@ -34,8 +36,7 @@ public class JPanelHome extends JPanel {
 		add(scrollPaneMain, gbc_scrollPaneMain);
 
 		JPanel panel = new JPanel();
-		scrollPaneMain.setViewportView(panel);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel.setLayout(new WrapLayout(FlowLayout.CENTER, 10, 10));
 
 		for (TeamName teamName : TeamName.values()) {
 			JButton button = new JButtonTeam(new Franchise(teamName));
@@ -44,13 +45,14 @@ public class JPanelHome extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JButtonTeam source = (JButtonTeam) e.getSource();
-					firePropertyChange("teamSelected", "empty value",
-							source.getFranchise());
+					firePropertyChange("teamSelected", "empty value", source.getFranchise());
 				}
 
 			});
 			panel.add(button);
 		}
+		
+		scrollPaneMain.setViewportView(panel);
 	}
 
 }
