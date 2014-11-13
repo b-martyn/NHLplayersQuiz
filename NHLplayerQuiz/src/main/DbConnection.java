@@ -29,7 +29,7 @@ import javax.sql.rowset.JdbcRowSet;
 import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 
-final class DbConnection {
+public final class DbConnection {
 	private static final String URL = "jdbc:mysql://173.48.157.224:3306/nhlPlayerQuiz";
 	private static final String USER_NAME = "playerQuizGuest";
 	private static final String PASSWORD = "guest";
@@ -43,7 +43,7 @@ final class DbConnection {
 	private static JdbcRowSet playerData;
 	private static JdbcRowSet updatePlayerData;
 
-	DbConnection() throws SQLException {
+	public DbConnection() throws SQLException {
 		initializePlayerData();
 		initializePlayerUpdates();
 		System.out.println(number++);
@@ -69,7 +69,7 @@ final class DbConnection {
 		updatePlayerData.execute();
 	}
 
-	ListOfRows<Player> getPlayers() throws SQLException {
+	public ListOfRows<Player> getPlayers() throws SQLException {
 		List<Player> players = new ArrayList<Player>();
 		playerData.beforeFirst();
 		while (playerData.next()) {
@@ -96,7 +96,7 @@ final class DbConnection {
 		return new ListOfRows<Player>(players);
 	}
 
-	ListOfRows<Suggestion> getSuggestions() throws SQLException {
+	public ListOfRows<Suggestion> getSuggestions() throws SQLException {
 		List<Suggestion> suggestions = new ArrayList<Suggestion>();
 		updatePlayerData.beforeFirst();
 		while (updatePlayerData.next()) {
@@ -110,7 +110,7 @@ final class DbConnection {
 		return new ListOfRows<Suggestion>(suggestions);
 	}
 
-	void vote(Suggestion suggestion, int voteCount) throws SQLException {
+	public void vote(Suggestion suggestion, boolean voteCount) throws SQLException {
 		if (checkOccurance(suggestion)) {
 			updatePlayerData.beforeFirst();
 			while (updatePlayerData.next()) {
@@ -120,7 +120,11 @@ final class DbConnection {
 						deleteRow(suggestion);
 						return;
 					}else if (numOfVotes < VOTE_LIMIT) {
-						updatePlayerData.updateInt("numOfVotes", numOfVotes	+ voteCount);
+						if(voteCount){
+							updatePlayerData.updateInt("numOfVotes", numOfVotes + 1);
+						}else{
+							updatePlayerData.updateInt("numOfVotes", numOfVotes	- 1);
+						}
 						updatePlayerData.updateRow();
 						return;
 					}else {
@@ -159,7 +163,8 @@ final class DbConnection {
 				}
 			}
 		} else {
-			addNewSuggestion(getPlayer(playerData.getInt("id")), suggestion);
+			addNewSuggestion(getPlayer(suggestion.getPlayerId()), suggestion);
+			//addNewSuggestion(getPlayer(playerData.getInt("id")), suggestion);
 		}
 	}
 
@@ -174,8 +179,7 @@ final class DbConnection {
 		return false;
 	}
 
-	void addNewSuggestion(Player player, Suggestion suggestion)
-			throws SQLException {
+	public void addNewSuggestion(Player player, Suggestion suggestion) throws SQLException {
 		if (suggestion.getField() == DbPlayerField.active && suggestion.getValue().equalsIgnoreCase("true")) {
 			if (!checkOccurance(player)) {
 				createNewPlayer(player);
@@ -183,7 +187,7 @@ final class DbConnection {
 			}
 		}
 		if (checkOccurance(suggestion)) {
-			vote(suggestion, 1);
+			vote(suggestion, true);
 		} else {
 			updatePlayerData.moveToInsertRow();
 			updatePlayerData.updateInt("playerId", player.getId());

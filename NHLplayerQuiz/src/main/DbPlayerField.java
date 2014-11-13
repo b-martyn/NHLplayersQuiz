@@ -1,5 +1,5 @@
 package main;
 
-enum DbPlayerField {
+public enum DbPlayerField {
 	active, firstName, lastName, team, position, number;
 }

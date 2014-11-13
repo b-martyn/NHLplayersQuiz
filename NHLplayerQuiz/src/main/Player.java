@@ -22,11 +22,12 @@ public class Player implements Searchable {
 	public Player(String firstName, String lastName, TeamName teamName,	Position position, int number) {
 		this(0, firstName, lastName, teamName, position, number, true);
 	}
-
+	
+	@Override
 	public int getId() {
 		return id;
 	}
-
+	
 	void setId(int id) {
 		this.id = id;
 	}
@@ -117,5 +118,35 @@ public class Player implements Searchable {
 				+ " Last Name: " + this.lastName + ", Team: "
 				+ this.franchise.toString() + ", Position: " + this.position
 				+ ", Number: " + this.number;
+	}
+	
+	public String[] compareTo(Object object) {
+		if(object instanceof Player){
+			Player comparingPlayer = (Player) object;
+			if(comparingPlayer.getLastName().equals(this.lastName) && comparingPlayer.getFirstName().equals(this.firstName)){
+				if(!this.equals(comparingPlayer)){
+					StringBuilder changes = new StringBuilder();
+					if(!comparingPlayer.getFranchise().equals(this.franchise)){
+						changes = new StringBuilder("franchise");
+					}
+					if(!(comparingPlayer.getNumber() == this.number)){
+						if(changes.length() != 0){
+							changes.append("|");
+						}
+						changes.append("number");
+					}
+					if(!comparingPlayer.getPosition().equals(this.position)){
+						if(changes.length() != 0){
+							changes.append("|");
+						}
+						changes.append("position");
+					}
+					return changes.toString().split("\\W");
+				}else{
+					return new String[]{"equal"};
+				}
+			}
+		}
+		return null;
 	}
 }

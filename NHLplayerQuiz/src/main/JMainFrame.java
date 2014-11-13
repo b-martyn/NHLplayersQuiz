@@ -181,12 +181,14 @@ public class JMainFrame {
 		panelSuggestions.addPropertyChangeListener("vote", new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent e) {
-				int voteCount = (int) e.getOldValue();
+				boolean voteCount = false;
+				if((int) e.getOldValue() > 0){
+					voteCount = true;
+				}
 				int suggestionId = (int) e.getNewValue();
 				if(suggestionId == 0){
 					suggestionId = 1;
 				}
-				System.out.println(suggestionId);
 				try {
 					DB_Connection.vote(Player_Updates.getRow(suggestionId), voteCount);
 					Player_Updates.deleteRow(suggestionId);

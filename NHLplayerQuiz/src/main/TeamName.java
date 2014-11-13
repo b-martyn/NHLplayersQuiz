@@ -1,7 +1,7 @@
 package main;
 
-enum TeamName {
-	BRUINS("Boston"), CANADIENS("Montreal"), DUCKS("Anaheim"), COYOTES("Arizona"), SABRES("Buffalo"), FLAMES("Calgary"), HURRICANES("Carolina"), 
+public enum TeamName {
+	BRUINS("Boston"), CANADIENS("Montr\u00E9al"), DUCKS("Anaheim"), COYOTES("Arizona"), SABRES("Buffalo"), FLAMES("Calgary"), HURRICANES("Carolina"), 
 	BLACKHAWKS("Chicago"), AVALANCHE("Colorado"), BLUE_JACKETS("Columbus"), STARS("Dallas"), RED_WINGS("Detroit"), OILERS("Edmonton"), 
 	PANTHERS("Florida"), KINGS("Los Angeles"), WILD("Minnesota"), PREDATORS("Nashville"), DEVILS("New Jersey"), ISLANDERS("New York"), 
 	RANGERS("New York"), SENATORS("Ottowa"), FLYERS("Philadelphia"), PENGUINS("Pittsburgh"), SHARKS("San Jose"), BLUES("St Louis"), 

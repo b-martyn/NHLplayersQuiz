@@ -40,14 +40,34 @@ public class Franchise {
 	public String toString() {
 		return this.province + " " + this.teamName;
 	}
-
+	
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Franchise){
+			Franchise compareingFranchise = (Franchise) o;
+			if(compareingFranchise.getProvince().equals(this.province)
+					&& compareingFranchise.getTeamName().equals(this.teamName)
+					&& compareingFranchise.getBaseColor().equals(this.baseColor)
+					&& compareingFranchise.getMainColor().equals(this.mainColor)
+					&& compareingFranchise.getSecondaryColor().equals(this.secondaryColor)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		int hash = 7;
+		hash *= province.length();
+		hash *= teamName.length();
+		hash *= (baseColor.getBlue() + baseColor.getRed() + baseColor.getRed() + 1);
+		hash *= (mainColor.getBlue() + mainColor.getRed() + mainColor.getRed() + 1);
+		hash *= (secondaryColor.getBlue() + secondaryColor.getRed() + secondaryColor.getRed() + 1);
+		return hash;
+	}
+	
 	private void pickColors(TeamName teamName) {
-		/*
-		 * , , , , , , , , , , , 
-			, , , , , , , , , , , , 
-			, , , , ;
-		 */
-		
 		switch (teamName) {
 			case BRUINS:
 				this.baseColor = new Color(0, 0, 0);
