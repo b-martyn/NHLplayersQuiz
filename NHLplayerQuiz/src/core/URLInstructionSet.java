@@ -1,4 +1,4 @@
-package maintenance;
+package core;
 
 import java.net.URL;
 import java.util.ArrayList;

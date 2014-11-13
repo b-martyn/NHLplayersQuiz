@@ -1,4 +1,4 @@
-package main;
+package core;
 
 public enum TeamName {
 	BRUINS("Boston"), CANADIENS("Montr\u00E9al"), DUCKS("Anaheim"), COYOTES("Arizona"), SABRES("Buffalo"), FLAMES("Calgary"), HURRICANES("Carolina"), 

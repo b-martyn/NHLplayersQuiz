@@ -1,8 +1,11 @@
-package main;
+package display;
 
 import javax.swing.JButton;
 
+import core.Franchise;
+
 public class JButtonTeam extends JButton {
+	private static final long serialVersionUID = -119285711301762675L;
 	private Franchise franchise;
 
 	JButtonTeam(Franchise franchise) {

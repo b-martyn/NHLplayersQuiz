@@ -1,4 +1,4 @@
-package main;
+package core;
 
 public class Player implements Searchable {
 	private int id;

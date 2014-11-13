@@ -1,4 +1,4 @@
-package main;
+package core;
 
 import java.awt.Color;
 
@@ -10,7 +10,7 @@ public class Franchise {
 	private Color mainColor;
 	private Color secondaryColor;
 
-	Franchise(TeamName teamName) {
+	public Franchise(TeamName teamName) {
 		this.teamName = teamName.toString();
 		this.province = teamName.value();
 		pickColors(teamName);

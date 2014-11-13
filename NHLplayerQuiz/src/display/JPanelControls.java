@@ -8,14 +8,15 @@
  * 		6: btnNew
  */
 
-package main;
+package display;
 
 import javax.swing.JPanel;
 
-import java.awt.Component;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
+
+import core.Player;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -23,6 +24,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
 class JPanelControls extends JPanel {
+	private static final long serialVersionUID = -6513982969506387180L;
+
 	private Player player;
 
 	private JButton btnHome, btnVote, btnQuiz, btnTeam, btnEdit, btnNew;

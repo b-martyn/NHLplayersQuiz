@@ -1,9 +1,17 @@
-package main;
+package display;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import core.DbConnection;
+import core.DbPlayerField;
+import core.Franchise;
+import core.ListOfRows;
+import core.Player;
+import core.Suggestion;
+import core.TeamName;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

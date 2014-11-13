@@ -14,7 +14,7 @@
  * +----+-----------+---------------+--------+---------+--------+----------+
  */
 
-package main;
+package display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -53,6 +53,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+
+import core.Franchise;
+import core.ListOfRows;
+import core.Player;
+import core.Suggestion;
 
 public class ScrollPaneFactory {
 	private ListOfRows<Suggestion> suggestions;
@@ -243,6 +248,8 @@ public class ScrollPaneFactory {
 
 	private JTable createTable() {
 		table = new JTable(){
+			private static final long serialVersionUID = -2806496862521768186L;
+
 			@Override
 			public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend){
 				super.changeSelection(rowIndex, columnIndex, true, extend);
@@ -488,6 +495,8 @@ public class ScrollPaneFactory {
 			headerRow = new String[]{""};
 		}
 		return new DefaultTableModel(convertData(team.getList()), headerRow) {
+			private static final long serialVersionUID = 841278072848260815L;
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -600,12 +609,9 @@ public class ScrollPaneFactory {
 	}
 	
 	private static class JDefaultTableCellRenderer extends	DefaultTableCellRenderer {
+		private static final long serialVersionUID = 8504432247807605343L;
 		static final Dimension NUMBER_CELL_SIZE = new Dimension(50, 50);
 		private HashMap<Integer[], String[]> cellsToHighlight;
-	
-		JDefaultTableCellRenderer() {
-			this(new HashMap<Integer[], String[]>());
-		}
 		
 		JDefaultTableCellRenderer(HashMap<Integer[], String[]> cellsToHighlight) {
 			this.cellsToHighlight = cellsToHighlight;
@@ -630,9 +636,9 @@ public class ScrollPaneFactory {
 						suggestionIdsColumn = i;
 					}
 				}
-				Iterator it = cellsToHighlight.entrySet().iterator();
+				Iterator<Entry<Integer[], String[]>> it = cellsToHighlight.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry entry = (Map.Entry) it.next();
+					Entry<Integer[], String[]> entry = it.next();
 					Integer[] cell = (Integer[]) entry.getKey();
 					String[] value_id = (String[]) entry.getValue();
 					if (cell[0] == row && cell[1] == column) {

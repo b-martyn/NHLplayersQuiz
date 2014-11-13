@@ -1,4 +1,4 @@
-package main;
+package display;
 
 import javax.swing.JPanel;
 
@@ -10,13 +10,17 @@ import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import core.Franchise;
+import core.ListOfRows;
+import core.Player;
+
 import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class JPanelQuiz extends JPanel {
-
+	private static final long serialVersionUID = 666998940154521576L;
 	private Franchise franchise;
 	private ListOfRows<Player> team;
 	private Player currentPlayer;

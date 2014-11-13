@@ -1,4 +1,4 @@
-package main;
+package display;
 
 import javax.swing.JPanel;
 
@@ -10,10 +10,15 @@ import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
 
+import core.Franchise;
+import core.TeamName;
+
 public class JPanelHome extends JPanel {
+	private static final long serialVersionUID = -1252823792236489008L;
 
 	public JPanelHome() {
 		initialize();

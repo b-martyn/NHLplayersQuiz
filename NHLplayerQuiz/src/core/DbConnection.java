@@ -19,7 +19,7 @@
  * enum playerField: active, firstName, lastName, team, position, number
  */
 
-package main;
+package core;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -265,7 +265,7 @@ public final class DbConnection {
 		return false;
 	}
 
-	void close() throws SQLException {
+	public void close() throws SQLException {
 		playerData.close();
 		updatePlayerData.close();
 	}

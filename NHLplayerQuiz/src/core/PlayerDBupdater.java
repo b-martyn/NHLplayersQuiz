@@ -1,17 +1,10 @@
-package maintenance;
+package core;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import main.DbConnection;
-import main.DbPlayerField;
-import main.Player;
-import main.Position;
-import main.Suggestion;
-import main.TeamName;
 
 public class PlayerDBupdater {
 	private DbConnection dbConnection;

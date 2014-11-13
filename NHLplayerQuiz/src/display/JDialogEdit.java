@@ -1,4 +1,4 @@
-package main;
+package display;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -27,6 +27,10 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.JPopupMenu;
 
+import core.Player;
+import core.Position;
+import core.TeamName;
+
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JDialogEdit extends JDialog {
+	private static final long serialVersionUID = 8628118566008055709L;
 	private Player player;
 	private Player editedPlayer;
 	private Border defaultBorder;
